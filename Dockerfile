@@ -39,7 +39,9 @@ ENV ANSIBLE_SSH_PIPELINING True
 ENV PATH /ansible/bin:$PATH
 ENV PYTHONPATH /ansible/lib
 
-COPY deploy.sh /ansible/deploy.sh
-RUN chmod +x /ansible/deploy.sh
+RUN ls
 
-ENTRYPOINT ["/ansible/deploy.sh"]
+COPY execute.sh /ansible/executec.sh
+RUN chmod +x /ansible/executec.sh
+
+ENTRYPOINT ["/ansible/executec.sh"]
