@@ -41,7 +41,7 @@ ENV PYTHONPATH /ansible/lib
 
 RUN ls
 
-COPY execute.sh /ansible/executec.sh
-RUN chmod +x /ansible/executec.sh
+COPY execute.sh /ansible/execute1.sh
+RUN chmod +x /ansible/execute1.sh
 
-ENTRYPOINT ["/ansible/executec.sh"]
+ENTRYPOINT ["/ansible/execute1.sh"]
