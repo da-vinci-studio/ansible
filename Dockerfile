@@ -1,4 +1,4 @@
-FROM gliderlabs/alpine:3.4
+FROM gliderlabs/alpine:3.9
 
 RUN \
   apk-install \
@@ -14,19 +14,23 @@ RUN \
     py-setuptools \
     py-yaml \
     tar && \
+    apk --update add --virtual .build-dependencies python-dev libffi-dev openssl-dev build-base && \
   pip install --upgrade pip python-keyczar && \
   pip install 'docker-py>=1.7.0' && \
   pip install 'docker-compose>=1.7.0' && \
+  pip install --no-cache --upgrade ansible && \
+  pip install zabbix-api && \
+  apk del --purge .build-dependencies && \
   rm -rf /var/cache/apk/*
 
 RUN mkdir /etc/ansible/ /ansible
 RUN echo "[local]" >> /etc/ansible/hosts && \
     echo "localhost" >> /etc/ansible/hosts
 
-RUN \
-  curl -fsSL https://releases.ansible.com/ansible/ansible-2.4.1.0.tar.gz -o ansible.tar.gz && \
-  tar -xzf ansible.tar.gz -C ansible --strip-components 1 && \
-  rm -fr ansible.tar.gz /ansible/docs /ansible/examples /ansible/packaging
+#RUN \
+#  curl -fsSL https://releases.ansible.com/ansible/ansible-2.4.1.0.tar.gz -o ansible.tar.gz && \
+#  tar -xzf ansible.tar.gz -C ansible --strip-components 1 && \
+#  rm -fr ansible.tar.gz /ansible/docs /ansible/examples /ansible/packaging
 
 RUN mkdir -p /ansible/playbooks
 WORKDIR /ansible/playbooks
@@ -41,7 +45,7 @@ ENV PYTHONPATH /ansible/lib
 
 RUN ls
 
-COPY execute.sh /ansible/execute1.sh
-RUN chmod +x /ansible/execute1.sh
+COPY execute.sh /ansible/execute.sh
+RUN chmod +x /ansible/execute.sh
 
-ENTRYPOINT ["/ansible/execute1.sh"]
+ENTRYPOINT ["/ansible/execute.sh"]
