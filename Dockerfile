@@ -1,36 +1,55 @@
-FROM gliderlabs/alpine:3.9
+#FROM gliderlabs/alpine:3.9
+FROM alpine:3.12
 
-RUN \
-  apk-install \
-    curl \
+#RUN apk --update -no-cache add \
+RUN apk --update add \
+    ca-certificates \
+    git \
     openssh-client \
-    python \
-    py-boto \
-    py-dateutil \
-    py-httplib2 \
-    py-jinja2 \
-    py-paramiko \
-    py-pip \
-    py-setuptools \
-    py-yaml \
-    tar && \
-    apk --update add --virtual .build-dependencies python-dev libffi-dev openssl-dev build-base && \
-  pip install --upgrade pip python-keyczar && \
-  pip install 'docker-py>=1.7.0' && \
-  pip install 'docker-compose>=1.7.0' && \
-  pip install --no-cache --upgrade ansible && \
-  pip install zabbix-api && \
-  apk del --purge .build-dependencies && \
-  rm -rf /var/cache/apk/*
+    python3 \
+    py3-pip \
+    sshpass \
+    gcc \
+    openssl
+
+RUN apk --upgrade add --virtual \
+    .build-deps \
+    python3-dev \
+    libffi-dev \
+    openssl-dev \
+    build-base \
+    curl
+
+RUN pip3 install --upgrade \
+    pip \
+    cffi
+
+RUN pip3 install \
+    ansible ansible-lint
+
+RUN rm -rf /var/cache/apk/*
+#RUN \
+#  apk --update add \
+#    py-boto \
+#    py-dateutil \
+#    py-httplib2 \
+#    py-jinja2 \
+#    py-paramiko \
+#    py-pip \
+#    py-setuptools \
+#    py-yaml \
+#    tar && \
+#    apk --update add --virtual .build-dependencies python-dev libffi-dev openssl-dev build-base && \
+#  pip install --upgrade pip python-keyczar && \
+#  pip install 'docker-py>=1.7.0' && \
+#  pip install 'docker-compose>=1.7.0' && \
+#  pip install zabbix-api && \
+#  apk del --purge .build-dependencies && \
+#  rm -rf /var/cache/apk/*
 
 RUN mkdir /etc/ansible/ /ansible
 RUN echo "[local]" >> /etc/ansible/hosts && \
     echo "localhost" >> /etc/ansible/hosts
-
-#RUN \
-#  curl -fsSL https://releases.ansible.com/ansible/ansible-2.4.1.0.tar.gz -o ansible.tar.gz && \
-#  tar -xzf ansible.tar.gz -C ansible --strip-components 1 && \
-#  rm -fr ansible.tar.gz /ansible/docs /ansible/examples /ansible/packaging
 
 RUN mkdir -p /ansible/playbooks
 WORKDIR /ansible/playbooks
