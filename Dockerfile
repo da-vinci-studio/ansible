@@ -10,7 +10,8 @@ RUN apk --update add \
     py3-pip \
     sshpass \
     gcc \
-    openssl
+    openssl \
+    && rm -rf /var/cache/apk/*
 
 RUN apk --upgrade add --virtual \
     .build-deps \
@@ -18,16 +19,11 @@ RUN apk --upgrade add --virtual \
     libffi-dev \
     openssl-dev \
     build-base \
-    curl
+    curl \
+    && pip3 install --upgrade pip cffi ansible ansible-lint \
+    && apk del --purge .build-deps \
+    && rm -rf /var/cache/apk/*
 
-RUN pip3 install --upgrade \
-    pip \
-    cffi
-
-RUN pip3 install \
-    ansible ansible-lint
-
-RUN rm -rf /var/cache/apk/*
 #RUN \
 #  apk --update add \
 #    py-boto \
