@@ -8,7 +8,7 @@ cp ~/ssh/* ~/.ssh
 chmod 0600 ~/.ssh/*
 
 EXTRA=''
-DEBUG=''
+DEBUG='-vvv'
 HAS_EXTRA=0
 
 for var in "$@"
@@ -34,6 +34,9 @@ elif [[ "$1" == "manage" ]] ; then
 elif [[ "$1" == "run" ]]; then	
 	echo "Executing RUN $3 on $2"
 	ansible-playbook $DEBUG -i inventories/$2 $3.yml $4
+elif [[ "$1" == "other" ]]; then
+  echo "Executing plain ansible command"
+  $2 $3 $4
 else	
   echo "Executing DEPLOY"
 	cd /ansible/playbooks
